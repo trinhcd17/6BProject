@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "229754082369",
+    "project_id": "bapp-93af2",
+    "storage_bucket": "bapp-93af2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229754082369:android:35aa9de76067340d4ae2c0",
+        "android_client_info": {
+          "package_name": "com.example.money_statistic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229754082369-rbfd8k3f2vr0r6t9jgrc8luqh3ck2qar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzCQXBR_vsj_UthDyMc0En-W062kUIc40"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229754082369-rbfd8k3f2vr0r6t9jgrc8luqh3ck2qar.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "229754082369-edptf1jjnp6rqcman0796jlpngqtvdp6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moneyStatistic"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
