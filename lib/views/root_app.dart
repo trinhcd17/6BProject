@@ -67,7 +67,7 @@ class _RootAppState extends State<RootApp> {
     return [
       PersistentBottomNavBarItem(
         icon: SvgPicture.asset(
-          'assets/icon/summary_icon.svg',
+          'assets/icons/summary_icon.svg',
           height: 25,
         ),
         title: ("Tổng kết"),
@@ -76,7 +76,7 @@ class _RootAppState extends State<RootApp> {
       ),
       PersistentBottomNavBarItem(
         icon: SvgPicture.asset(
-          'assets/icon/home_icon.svg',
+          'assets/icons/home_icon.svg',
           height: 25,
         ),
         title: ("Thống kê"),
@@ -85,7 +85,7 @@ class _RootAppState extends State<RootApp> {
       ),
       PersistentBottomNavBarItem(
         icon: SvgPicture.asset(
-          'assets/icon/history_icon.svg',
+          'assets/icons/history_icon.svg',
           height: 25,
         ),
         title: ("Lịch sử"),
@@ -94,7 +94,7 @@ class _RootAppState extends State<RootApp> {
       ),
       PersistentBottomNavBarItem(
         icon: SvgPicture.asset(
-          'assets/icon/profile_icon.svg',
+          'assets/icons/profile_icon.svg',
           height: 25,
         ),
         title: ("Tài khoản"),

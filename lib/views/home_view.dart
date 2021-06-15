@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:money_statistic/constants.dart';
+import 'package:money_statistic/views/add_view/add_view.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 import 'package:table_calendar/table_calendar.dart';
 
@@ -11,7 +13,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   CalendarController _calendarController;
-
+  int sum = 0;
   @override
   void initState() {
     // TODO: implement initState
@@ -39,9 +41,11 @@ class _HomeViewState extends State<HomeView> {
             Padding(
               padding: const EdgeInsets.only(right: 15.0),
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  pushNewScreen(context, screen: AddView(), withNavBar: false);
+                },
                 child: SvgPicture.asset(
-                  'assets/icon/add.svg',
+                  'assets/icons/add.svg',
                   height: 25,
                   color: kPrimaryColor,
                 ),
@@ -63,12 +67,16 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 10.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Các khoản đã chi',
                       style: TextStyle(
                           color: kPrimaryColor, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Tổng: $sum đ',
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
                     ),
                   ],
                 ),
@@ -76,99 +84,64 @@ class _HomeViewState extends State<HomeView> {
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          height: 50,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      children: [
+                        buildListItem(),
+                        buildListItem(),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Container buildListItem() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20.0),
+      height: 60,
+      decoration: BoxDecoration(
+        color: kPrimaryColorWithOpacity,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10.0),
+            width: 2,
+            color: kPrimaryColor,
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Mua quần áo',
+                  style: TextStyle(
+                      color: kSecondaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '50.000 đ',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -13,11 +13,17 @@ class AuthService {
     var userCredential = await AuthService.auth
         .signInWithEmailAndPassword(email: userID, password: password);
     if (userCredential.user != null) {
+      getUserData();
       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute(builder: (BuildContext context) => RootApp()),
         (Route<dynamic> route) => false,
       );
     }
+  }
+
+  static getUserData() async {
+    FirebaseUser user = await currentUserFBA;
+    uid = user.uid;
   }
 
   static signOut() async {

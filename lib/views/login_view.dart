@@ -25,59 +25,54 @@ class _LoginViewState extends State<LoginView> {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        title: Text(
-          'Đăng nhập',
-          style: TextStyle(color: kPrimaryColor),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: InkWell(
+      body: SafeArea(
+        child: InkWell(
           onTap: () {
-            Navigator.pop(context);
+            FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: kPrimaryColor,
-          ),
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SvgPicture.asset(
-              'assets/login.svg',
-              height: screenSize.height * 0.25,
-            ),
-            Column(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildInputID(context),
                 Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                      top: 20.0),
-                  child: buildInputPassword(context),
+                  padding: const EdgeInsets.only(top: 25),
+                  child: SvgPicture.asset(
+                    'assets/splash.svg',
+                    height: screenSize.height * 0.35,
+                  ),
+                ),
+                Column(
+                  children: [
+                    buildInputID(context),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                          top: 20.0),
+                      child: buildInputPassword(context),
+                    ),
+                  ],
+                ),
+                RoundedButton(
+                  loading: loading,
+                  title: 'Đăng nhập',
+                  function: () {
+                    _loginFunc();
+                  },
+                  screenSize: screenSize,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: InkWell(
+                    onTap: () {
+                      _showMaterialDialog('', 'Liên hệ Trinh đẹp trai nhé!');
+                    },
+                    child: Text('Không có tài khoản?'),
+                  ),
                 ),
               ],
             ),
-            RoundedButton(
-                loading: loading,
-                title: 'Đăng nhập',
-                function: () {
-                  _loginFunc();
-                }),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 5),
-              child: InkWell(
-                onTap: () {
-                  _showMaterialDialog('', 'Liên hệ Trinh đẹp trai nhé!');
-                },
-                child: Text('Không có tài khoản?'),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

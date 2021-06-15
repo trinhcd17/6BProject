@@ -35,12 +35,14 @@ class _SplashViewState extends State<SplashView> {
             ),
             Text('Quản lý chi tiêu cho gia đình của bạn'),
             RoundedButton(
-                loading: false,
-                title: 'Đăng nhập',
-                function: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginView()));
-                }),
+              loading: false,
+              title: 'Đăng nhập',
+              function: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginView()));
+              },
+              screenSize: screenSize,
+            ),
           ],
         ),
       ),

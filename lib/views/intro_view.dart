@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_statistic/constants.dart';
+import 'package:money_statistic/service/authService.dart';
+import 'package:money_statistic/views/login_view.dart';
+import 'package:money_statistic/views/root_app.dart';
 import 'package:money_statistic/views/splash.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -20,9 +23,8 @@ class _IntroScreenState extends State<IntroScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var result = FirebaseAuth.instance.currentUser;
     return new SplashScreen(
-        navigateAfterSeconds: result != null ? SplashView() : SplashView(),
+        navigateAfterSeconds: user != null ? RootApp() : LoginView(),
         seconds: 5,
         image: Image.asset('assets/splash_picture.png', fit: BoxFit.scaleDown),
         backgroundColor: Colors.white,
@@ -33,5 +35,8 @@ class _IntroScreenState extends State<IntroScreen> {
 
   getUserLogin() async {
     user = await FirebaseAuth.instance.currentUser();
+    if (user != null) {
+      AuthService.getUserData();
+    }
   }
 }
