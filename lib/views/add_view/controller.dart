@@ -5,6 +5,8 @@ class AddController extends GetxController {
   DateTime dateTime = DateTime.now();
   bool loading = false;
   bool switchStatus = false;
+  bool isEditing = false;
+
   void changeDateTime(DateTime _dateTime) {
     dateTime = _dateTime;
     update();
@@ -19,4 +21,6 @@ class AddController extends GetxController {
     switchStatus = status;
     update();
   }
+
+  void getAllUsers() {}
 }

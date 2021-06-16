@@ -25,52 +25,59 @@ class _LoginViewState extends State<LoginView> {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: SafeArea(
-        child: InkWell(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 25),
-                  child: SvgPicture.asset(
-                    'assets/splash.svg',
-                    height: screenSize.height * 0.35,
-                  ),
-                ),
-                Column(
-                  children: [
-                    buildInputID(context),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom,
-                          top: 20.0),
-                      child: buildInputPassword(context),
+      body: Theme(
+        data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent),
+        child: SafeArea(
+          child: InkWell(
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: SvgPicture.asset(
+                      'assets/splash.svg',
+                      height: screenSize.height * 0.35,
                     ),
-                  ],
-                ),
-                RoundedButton(
-                  loading: loading,
-                  title: 'Đăng nhập',
-                  function: () {
-                    _loginFunc();
-                  },
-                  screenSize: screenSize,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 5),
-                  child: InkWell(
-                    onTap: () {
-                      _showMaterialDialog('', 'Liên hệ Trinh đẹp trai nhé!');
-                    },
-                    child: Text('Không có tài khoản?'),
                   ),
-                ),
-              ],
+                  Column(
+                    children: [
+                      buildInputID(context),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom,
+                            top: 20.0),
+                        child: buildInputPassword(context),
+                      ),
+                    ],
+                  ),
+                  RoundedButton(
+                    loading: loading,
+                    title: 'Đăng nhập',
+                    function: () {
+                      _loginFunc();
+                    },
+                    backgroundColor: kPrimaryColor,
+                    screenSize: screenSize,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: InkWell(
+                      onTap: () {
+                        _showMaterialDialog('', 'Liên hệ Trinh đẹp trai nhé!');
+                      },
+                      child: Text('Không có tài khoản?'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -81,7 +88,7 @@ class _LoginViewState extends State<LoginView> {
   Container buildInputPassword(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(91, 103, 202, 150),
+        color: kPrimaryColorWithOpacity,
         borderRadius: BorderRadius.circular(29),
       ),
       child: Theme(
@@ -113,7 +120,7 @@ class _LoginViewState extends State<LoginView> {
   Container buildInputID(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(91, 103, 202, 150),
+        color: kPrimaryColorWithOpacity,
         borderRadius: BorderRadius.circular(29),
       ),
       child: Theme(

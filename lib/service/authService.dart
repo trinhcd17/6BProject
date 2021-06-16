@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:money_statistic/service/user_service.dart';
 import 'package:money_statistic/views/root_app.dart';
 
 class AuthService {
@@ -24,6 +25,7 @@ class AuthService {
   static getUserData() async {
     FirebaseUser user = await currentUserFBA;
     uid = user.uid;
+    UserService.getUserInfo();
   }
 
   static signOut() async {

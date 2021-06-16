@@ -6,12 +6,12 @@ class UserService {
   UserService();
   static final _fireStore = Firestore.instance;
   static final String _collection = 'Users';
-
+  static var res = {
+    "data": [],
+    "error": "",
+  };
   static Future getUserInfo() async {
-    var res = {
-      "data": [],
-      "error": "",
-    };
+    res['error'] = '';
     try {
       var data = await _fireStore
           .collection(_collection)
@@ -23,6 +23,45 @@ class UserService {
         res["error"] = "User not found!";
       }
       return false;
+    } catch (e) {
+      print(e);
+      res["error"] = e.message;
+    }
+    return res;
+  }
+
+  static Future getAllUsers() async {
+    res['error'] = '';
+    listUsers = [];
+    try {
+      var data = await _fireStore.collection(_collection).getDocuments();
+      if (data.documents.length <= 0) {
+        res["error"] = 'No user available!';
+      } else {
+        data.documents.forEach((element) {
+          User user = User.fromJson(element.data);
+          if (!listUsers.contains(user)) {
+            listUsers.add(user);
+          }
+        });
+      }
+    } catch (e) {
+      print(e);
+      res["error"] = e.message;
+    }
+    return res;
+  }
+
+  static Future getDisplayNameByUID(String uid) async {
+    res['error'] = '';
+    listUsers = [];
+    try {
+      var data = await _fireStore.collection(_collection).document(uid).get();
+      if (data.exists) {
+        res['data'] = data.data['displayName'];
+      } else {
+        res["error"] = "User not found!";
+      }
     } catch (e) {
       print(e);
       res["error"] = e.message;

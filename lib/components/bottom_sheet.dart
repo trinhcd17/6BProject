@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:money_statistic/constants.dart';
+import 'package:money_statistic/models/user.dart';
+import 'package:money_statistic/service/authService.dart';
+import 'package:money_statistic/service/user_service.dart';
 
 class CustomBottomSheet extends StatefulWidget {
   final bool reverse;
@@ -13,11 +17,11 @@ class CustomBottomSheet extends StatefulWidget {
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
   final BottomSheetController _bottomSheetController =
       Get.put(BottomSheetController());
-  List<dynamic> selectedItem = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    selectedUsers = [];
   }
 
   @override
@@ -25,55 +29,77 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     return Material(
         child: SafeArea(
       top: false,
-      child: GetBuilder<BottomSheetController>(builder: (_) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(right: 10, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(3),
-                      height: 30,
-                      child: Icon(
-                        Icons.clear,
-                        color: Colors.grey.shade700,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        shape: BoxShape.circle,
-                      ),
+      child: FutureBuilder(
+          future: UserService.getAllUsers(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(
+                    kPrimaryColor,
+                  ),
+                ),
+              );
+            }
+            return GetBuilder<BottomSheetController>(builder: (_) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 10, top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(3),
+                            height: 30,
+                            child: Icon(
+                              Icons.clear,
+                              color: kPrimaryColor,
+                            ),
+                            decoration: BoxDecoration(
+                              color: kPrimaryColorWithOpacity,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: listUsers.length,
+                        itemBuilder: (context, index) {
+                          return buildItem(_, index);
+                        }),
+                  ),
                 ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return buildItem(_, index);
-                  }),
-            ),
-          ],
-        );
-      }),
+              );
+            });
+          }),
     ));
   }
 
-  ListTile buildItem(BottomSheetController _, index) {
+  Widget buildItem(BottomSheetController _, index) {
+    if (listUsers[index].uid == AuthService.uid) {
+      return Container();
+    }
     return ListTile(
-      title: Text('Person $index'),
+      title: Text(listUsers[index].displayName),
       trailing: GestureDetector(
-        onTap: () {},
-        child: Checkbox(
-          value: _.checkBoxStatus,
+        onTap: () {
+          _.selectItem(listUsers[index]);
+        },
+        child: Icon(
+          selectedUsers.contains(listUsers[index])
+              ? Icons.check_box
+              : Icons.check_box_outline_blank,
+          color: kPrimaryColor,
         ),
       ),
     );
@@ -82,10 +108,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
 class BottomSheetController extends GetxController {
   BottomSheetController();
-  bool checkBoxStatus = false;
 
-  void changeCheckBox(bool status) {
-    checkBoxStatus = status;
+  void selectItem(User user) {
+    if (selectedUsers.contains(user)) {
+      selectedUsers.remove(user);
+    } else {
+      selectedUsers.add(user);
+    }
     update();
   }
 }

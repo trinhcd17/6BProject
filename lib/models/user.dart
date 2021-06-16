@@ -37,3 +37,5 @@ class User {
 }
 
 User currentU;
+List<User> listUsers = [];
+List<User> selectedUsers = [];

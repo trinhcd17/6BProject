@@ -4,6 +4,7 @@ import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/models/user.dart';
 import 'package:money_statistic/service/authService.dart';
 import 'package:money_statistic/service/user_service.dart';
+import 'package:money_statistic/views/login_view.dart';
 import 'package:money_statistic/views/splash.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
@@ -20,88 +21,108 @@ class _ProfileViewState extends State<ProfileView> {
     final String avatarDemo = 'assets/images/spider_man.jpeg';
 
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: Colors.white,
       appBar: buildAppBar(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: FutureBuilder(
+          future: UserService.getUserInfo(),
+          builder: (context, snapshot) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                buildHeader(screenSize, avatarDemo, snapshot),
+                buildBody(snapshot, screenSize),
+              ],
+            );
+          }),
+    );
+  }
+
+  Expanded buildBody(AsyncSnapshot snapshot, Size screenSize) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: kPrimaryColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+        ),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 30,
+            ),
+            buildItem('Tài khoản:',
+                snapshot.hasData ? currentU.username : 'username'),
+            buildItem('Tháng này:', '200000000 đ'),
+            buildItem('Tổng cộng:', '200000000 đ'),
+            Spacer(),
+            RoundedButton(
+              title: 'Đổi mật khẩu',
+              function: () {
+                UserService.getUserInfo();
+              },
+              loading: false,
+              screenSize: screenSize,
+              backgroundColor: Colors.white,
+              textColor: kPrimaryColor,
+            ),
+            SizedBox(
+              height: 40,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container buildHeader(
+      Size screenSize, String avatarDemo, AsyncSnapshot snapshot) {
+    return Container(
+      width: screenSize.width,
+      height: screenSize.height / 3 - 20,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(50.0),
+          bottomRight: Radius.circular(50.0),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: screenSize.width,
-            height: screenSize.height / 3 - 20,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50.0),
-                bottomRight: Radius.circular(50.0),
-              ),
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.lightBlueAccent,
+                    kPrimaryColorWithOpacity,
+                  ]),
             ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: screenSize.height / 3 / 7,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.lightBlueAccent,
-                          kPrimaryColorWithOpacity,
-                        ]),
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.all(3.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(avatarDemo),
-                      radius: 60.0,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: Text(
-                    currentU.displayName.toUpperCase(),
-                    style: TextStyle(
-                        color: kPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                ),
-              ],
+            child: Container(
+              margin: EdgeInsets.all(3.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3),
+              ),
+              child: CircleAvatar(
+                backgroundImage: AssetImage(avatarDemo),
+                radius: 60.0,
+              ),
             ),
           ),
-          Expanded(
-            child: Container(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  buildItem('Tài khoản:', currentU.username),
-                  buildItem('Tháng này:', '200000000 đ'),
-                  buildItem('Tổng cộng:', '200000000 đ'),
-                  Spacer(),
-                  RoundedButton(
-                    title: 'Đổi mật khẩu',
-                    function: () {
-                      UserService.getUserInfo();
-                    },
-                    loading: false,
-                    screenSize: screenSize,
-                    backgroundColor: Colors.white,
-                    textColor: kPrimaryColor,
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Text(
+              // snapshot.hasData ? currentU.displayName : 'Loading',
+              snapshot.hasData ? currentU.displayName : 'Loading',
+              style: TextStyle(
+                  color: kPrimaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
             ),
           ),
         ],
@@ -178,7 +199,7 @@ class _ProfileViewState extends State<ProfileView> {
           child: InkWell(
             onTap: () {
               AuthService.signOut();
-              pushNewScreen(context, screen: SplashView(), withNavBar: false);
+              pushNewScreen(context, screen: LoginView(), withNavBar: false);
             },
             child: Icon(
               Icons.exit_to_app_outlined,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/views/history_view.dart';
-import 'package:money_statistic/views/home_view.dart';
+import 'package:money_statistic/views/home_view/home_view.dart';
 import 'package:money_statistic/views/profile_view.dart';
 import 'package:money_statistic/views/summary_view.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -29,7 +29,7 @@ class _RootAppState extends State<RootApp> {
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset:
           true, // This needs to be true if you want to move up the screen when keyboard appears.
-      stateManagement: true,
+      stateManagement: false,
       hideNavigationBarWhenKeyboardShows:
           true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument.
       decoration: NavBarDecoration(

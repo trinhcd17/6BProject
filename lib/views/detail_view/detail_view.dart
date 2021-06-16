@@ -3,35 +3,49 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:money_statistic/components/bottom_sheet.dart';
 import 'package:money_statistic/components/rounded_button.dart';
 import 'package:money_statistic/constants.dart';
+import 'package:money_statistic/models/transaction.dart';
 import 'package:money_statistic/models/user.dart';
 import 'package:money_statistic/service/transaction_service.dart';
 import 'package:money_statistic/service/user_service.dart';
 import 'package:money_statistic/views/add_view/controller.dart';
+import 'package:money_statistic/views/detail_view/controller.dart';
 import 'package:toast/toast.dart';
 
-class AddView extends StatefulWidget {
+class DetailView extends StatefulWidget {
+  final Transactions transactions;
+
+  const DetailView({Key key, this.transactions}) : super(key: key);
+
   @override
-  _AddViewState createState() => _AddViewState();
+  _DetailViewState createState() => _DetailViewState();
 }
 
-class _AddViewState extends State<AddView> {
+class _DetailViewState extends State<DetailView> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dateTimeController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  final AddController addController = Get.put(AddController());
+  final DetailController detailController = Get.put(DetailController());
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    addController.changeDateTime(DateTime.now());
+    initDetailController();
+    titleController.text = widget.transactions.title;
+    priceController.text = widget.transactions.price.toString();
     dateTimeController.text =
-        '${addController.dateTime.day} Tháng ${addController.dateTime.month} ${addController.dateTime.year}';
+        '${detailController.dateTime.day} Tháng ${detailController.dateTime.month} ${detailController.dateTime.year}';
+  }
+
+  void initDetailController() {
+    detailController.changeDateTime(DateTime.now());
+    detailController.changeEditStatus(false);
+    detailController.listUsers = widget.transactions.userSpecial;
+    detailController.changeSwitchStatus(widget.transactions.special);
   }
 
   @override
@@ -48,11 +62,11 @@ class _AddViewState extends State<AddView> {
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
-          child: GetBuilder<AddController>(builder: (_) {
+          child: GetBuilder<DetailController>(builder: (_) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               margin: EdgeInsets.symmetric(vertical: 25.0),
-              child: Stack(
+              child: Column(
                 children: [
                   Form(
                     key: _formKey,
@@ -66,6 +80,7 @@ class _AddViewState extends State<AddView> {
                               fontWeight: FontWeight.bold),
                         ),
                         TextFormField(
+                          enabled: _.isEditing,
                           controller: titleController,
                           validator: (value) {
                             if (value.trim().isEmpty) {
@@ -84,38 +99,38 @@ class _AddViewState extends State<AddView> {
                               color: kPrimaryColor,
                               fontWeight: FontWeight.bold),
                         ),
-                        GetBuilder<AddController>(builder: (__) {
-                          dateTimeController.text =
-                              '${_.dateTime.day} Tháng ${_.dateTime.month} ${_.dateTime.year}';
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () {
+                        Stack(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                if (_.isEditing) {
                                   showDatePicker(context);
-                                },
-                                child: AbsorbPointer(
-                                  child: TextField(
-                                    controller: dateTimeController,
-                                  ),
+                                }
+                              },
+                              child: AbsorbPointer(
+                                child: TextField(
+                                  controller: dateTimeController,
                                 ),
                               ),
-                              Positioned(
-                                top: 15,
-                                right: 10,
-                                child: InkWell(
-                                  onTap: () {
+                            ),
+                            Positioned(
+                              top: 15,
+                              right: 10,
+                              child: InkWell(
+                                onTap: () {
+                                  if (_.isEditing) {
                                     showDatePicker(context);
-                                  },
-                                  child: Icon(
-                                    Icons.calendar_today_outlined,
-                                    color: kPrimaryColor,
-                                    size: 20,
-                                  ),
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: kPrimaryColor,
+                                  size: 20,
                                 ),
                               ),
-                            ],
-                          );
-                        }),
+                            ),
+                          ],
+                        ),
                         SizedBox(
                           height: 30,
                         ),
@@ -128,6 +143,7 @@ class _AddViewState extends State<AddView> {
                         Stack(
                           children: [
                             TextFormField(
+                              enabled: _.isEditing,
                               controller: priceController,
                               keyboardType: TextInputType.number,
                               inputFormatters: [
@@ -171,34 +187,62 @@ class _AddViewState extends State<AddView> {
                                 activeColor: kPrimaryColor,
                                 value: _.switchStatus,
                                 onChanged: (status) {
-                                  addController.changeSwitchStatus(status);
-                                  if (status) {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) => CustomBottomSheet(
-                                              reverse: true,
-                                            )).whenComplete(() {
-                                      if (selectedUsers.isEmpty) {
-                                        _.changeSwitchStatus(false);
-                                      }
-                                    });
+                                  if (_.isEditing) {
+                                    detailController.changeSwitchStatus(status);
+                                    if (status) {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) =>
+                                              CustomBottomSheet(
+                                                reverse: true,
+                                              )).whenComplete(() {
+                                        if (selectedUsers.isEmpty) {
+                                          _.changeSwitchStatus(false);
+                                        }
+                                      });
+                                    } else {
+                                      _.listUsers = [];
+                                    }
                                   }
                                 }),
+                          ],
+                        ),
+                        Wrap(
+                          direction: Axis.horizontal,
+                          children: [
+                            for (var item in _.listUsers)
+                              buildSpecialUserItem(_, item),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    bottom: 20,
-                    child: RoundedButton(
-                      title: 'Tạo',
-                      function: () async {
-                        await _createFunc(_);
-                      },
-                      loading: _.loading,
-                      screenSize: screenSize,
-                      backgroundColor: kPrimaryColor,
+                  Spacer(),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 16),
+                    width: screenSize.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RoundedButtonHalfSize(
+                          title: _.isEditing ? 'Lưu' : 'Chỉnh sửa',
+                          function: () async {
+                            _.changeEditStatus(true);
+                          },
+                          loading: _.loading,
+                          screenSize: screenSize,
+                          backgroundColor:
+                              _.isEditing ? Colors.blueAccent : kPrimaryColor,
+                        ),
+                        if (!_.isEditing)
+                          RoundedButtonHalfSize(
+                            title: 'Xoá',
+                            function: () async {},
+                            loading: _.loading,
+                            screenSize: screenSize,
+                            backgroundColor: Colors.red,
+                          ),
+                      ],
                     ),
                   ),
                 ],
@@ -210,16 +254,57 @@ class _AddViewState extends State<AddView> {
     );
   }
 
-  Future _createFunc(AddController _) async {
+  Widget buildSpecialUserItem(DetailController _, String uid) {
+    return FutureBuilder(
+        future: UserService.getDisplayNameByUID(uid),
+        builder: (context, snapshot) {
+          return Container(
+            height: 30,
+            width: 100,
+            margin: EdgeInsets.only(right: 10.0, bottom: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 5),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+                color: kPrimaryColorWithOpacity),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    snapshot.hasData ? snapshot.data['data'] : '...',
+                    style: TextStyle(color: kPrimaryColor),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (_.isEditing)
+                  InkWell(
+                    onTap: () {
+                      _.removeUser(uid);
+                    },
+                    child: Icon(
+                      Icons.cancel_rounded,
+                      size: 15,
+                    ),
+                  ),
+              ],
+            )),
+          );
+        });
+  }
+
+  Future _createFunc(DetailController _) async {
     if (_formKey.currentState.validate()) {
-      addController.isLoading(true);
+      detailController.isLoading(true);
       await TransactionService.addTransaction(
           titleController.text,
-          addController.dateTime,
+          detailController.dateTime,
           int.parse(priceController.text.toString()),
           _.switchStatus,
           selectedUsers);
-      addController.isLoading(false);
+      detailController.isLoading(false);
       showToast('Update thành công!');
       _.changeSwitchStatus(false);
       clearTextField();
@@ -244,7 +329,7 @@ class _AddViewState extends State<AddView> {
         showTitleActions: true,
         minTime: DateTime(2018, 1, 1),
         maxTime: DateTime.now(), onConfirm: (DateTime date) {
-      addController.changeDateTime(date);
+      detailController.changeDateTime(date);
     }, currentTime: DateTime.now(), locale: LocaleType.vi);
   }
 

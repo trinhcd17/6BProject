@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:money_statistic/constants.dart';
+import 'package:money_statistic/models/user.dart';
 import 'package:money_statistic/service/authService.dart';
+import 'package:money_statistic/service/user_service.dart';
 import 'package:money_statistic/views/login_view.dart';
 import 'package:money_statistic/views/root_app.dart';
 import 'package:money_statistic/views/splash.dart';
