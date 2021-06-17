@@ -86,9 +86,6 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   }
 
   Widget buildItem(BottomSheetController _, index) {
-    if (listUsers[index].uid == AuthService.uid) {
-      return Container();
-    }
     return ListTile(
       title: Text(listUsers[index].displayName),
       trailing: GestureDetector(

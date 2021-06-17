@@ -151,10 +151,10 @@ class _LoginViewState extends State<LoginView> {
       loading = true;
     });
     try {
-      // final String userID = '${userIDController.text}@6b.io';
-      // final String password = '${passwordController.text}';
-      final String userID = 'trinhcd@6b.io';
-      final String password = '123456';
+      final String userID = '${userIDController.text}@6b.io';
+      final String password = '${passwordController.text}';
+      // final String userID = 'test@6b.io';
+      // final String password = '123456';
       await AuthService.login(userID, password, context);
     } catch (e) {
       print(e);

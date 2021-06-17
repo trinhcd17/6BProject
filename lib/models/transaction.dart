@@ -7,6 +7,7 @@ String transactionToJson(Transactions data) => json.encode(data.toJson());
 
 class Transactions {
   Transactions({
+    this.id,
     this.title,
     this.dateTime,
     this.price,
@@ -14,7 +15,7 @@ class Transactions {
     this.special,
     this.userSpecial,
   });
-
+  String id;
   String title;
   int dateTime;
   int price;
@@ -23,6 +24,7 @@ class Transactions {
   List<dynamic> userSpecial;
 
   factory Transactions.fromJson(Map<String, dynamic> json) => Transactions(
+        id: json["id"],
         title: json["title"],
         dateTime: json["dateTime"],
         price: json["price"],
@@ -34,6 +36,7 @@ class Transactions {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "title": title,
         "dateTime": dateTime,
         "price": price,

@@ -11,6 +11,7 @@ class User {
     this.role,
     this.username,
     this.active,
+    this.photoURL,
   });
 
   String displayName;
@@ -18,6 +19,7 @@ class User {
   String role;
   String username;
   bool active;
+  String photoURL;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         displayName: json["displayName"],
@@ -25,6 +27,7 @@ class User {
         role: json["role"],
         username: json["username"],
         active: json["active"],
+        photoURL: json["photoURL"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +36,7 @@ class User {
         "role": role,
         "username": username,
         "active": active,
+        "photoURL": photoURL,
       };
 }
 

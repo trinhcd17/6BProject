@@ -60,25 +60,62 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget buildListTransactions(HomeController _) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: kPrimaryColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
+    return GetBuilder<HomeController>(builder: (__) {
+      return Expanded(
+        child: Container(
+          decoration: BoxDecoration(
+            color: kPrimaryColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: FutureBuilder(
-                future: TransactionService.getTransactionByUID(_.selectedDay),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List<Transactions> listTransactions = snapshot.data['data'];
-                    int total = snapshot.data['totalPrice'];
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: FutureBuilder(
+                  future: TransactionService.getTransactionByUID(_.selectedDay),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Transactions> listTransactions =
+                          snapshot.data['data'];
+                      int total = snapshot.data['totalPrice'];
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Các khoản đã chi',
+                                  style: TextStyle(
+                                      color: textColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Text(
+                                  'Tổng: $total đ',
+                                  style:
+                                      TextStyle(color: textColor, fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              for (var i = 0; i < listTransactions.length; i++)
+                                buildListItem(
+                                    listTransactions[i].title,
+                                    listTransactions[i].price,
+                                    listTransactions[i],
+                                    __),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
                     return Column(
                       children: [
                         Padding(
@@ -94,64 +131,31 @@ class _HomeViewState extends State<HomeView> {
                                     fontSize: 20),
                               ),
                               Text(
-                                'Tổng: $total đ',
+                                'Tổng: 0 đ',
                                 style:
                                     TextStyle(color: textColor, fontSize: 15),
                               ),
                             ],
                           ),
                         ),
-                        Column(
-                          children: [
-                            for (var i = 0; i < listTransactions.length; i++)
-                              buildListItem(
-                                listTransactions[i].title,
-                                listTransactions[i].price,
-                                listTransactions[i],
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                Colors.white,
                               ),
-                          ],
-                        ),
-                      ],
-                    );
-                  }
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Các khoản đã chi',
-                              style: TextStyle(
-                                  color: textColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
-                            ),
-                            Text(
-                              'Tổng: 0 đ',
-                              style: TextStyle(color: textColor, fontSize: 15),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            valueColor: new AlwaysStoppedAnimation<Color>(
-                              Colors.white,
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
+                      ],
+                    );
+                  }),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Container buildCalendar(HomeController _) {
@@ -187,7 +191,10 @@ class _HomeViewState extends State<HomeView> {
           padding: const EdgeInsets.only(right: 15.0),
           child: InkWell(
             onTap: () async {
-              pushNewScreen(context, screen: AddView(), withNavBar: false);
+              pushNewScreen(context, screen: AddView(), withNavBar: false)
+                  .then((value) {
+                _homeController.reloadView();
+              });
             },
             child: SvgPicture.asset(
               'assets/icons/add.svg',
@@ -201,14 +208,20 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget buildListItem(String title, int price, Transactions transactions) {
+  Widget buildListItem(
+      String title, int price, Transactions transactions, HomeController __) {
     return InkWell(
       onTap: () {
         pushNewScreen(context,
-            screen: DetailView(
-              transactions: transactions,
-            ),
-            withNavBar: false);
+                screen: DetailView(
+                  transactions: transactions,
+                ),
+                withNavBar: false)
+            .then((value) {
+          if (value == 'Reload') {
+            __.reloadView();
+          }
+        });
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 20.0),

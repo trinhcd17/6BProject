@@ -9,6 +9,7 @@ class AuthService {
   static var currentUserFBA = FirebaseAuth.instance.currentUser();
   static final _firestore = Firestore.instance;
   static String uid;
+  static FirebaseUser user;
 
   static login(String userID, String password, context) async {
     var userCredential = await AuthService.auth
@@ -23,8 +24,9 @@ class AuthService {
   }
 
   static getUserData() async {
-    FirebaseUser user = await currentUserFBA;
+    user = await FirebaseAuth.instance.currentUser();
     uid = user.uid;
+    print(uid);
     UserService.getUserInfo();
   }
 

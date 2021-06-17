@@ -26,10 +26,15 @@ dependencies:
   get: ^3.21.2
   toast: ^0.1.5
   modal_bottom_sheet: ^1.0.0
+  image_picker: ^0.6.7+14
+  flutter_launcher_icons: 0.8.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
+
 flutter:
   uses-material-design: true
 

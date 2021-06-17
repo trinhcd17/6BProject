@@ -8,6 +8,7 @@ import 'package:money_statistic/components/rounded_button.dart';
 import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/models/transaction.dart';
 import 'package:money_statistic/models/user.dart';
+import 'package:money_statistic/service/authService.dart';
 import 'package:money_statistic/service/transaction_service.dart';
 import 'package:money_statistic/service/user_service.dart';
 import 'package:money_statistic/views/add_view/controller.dart';
@@ -42,7 +43,8 @@ class _DetailViewState extends State<DetailView> {
   }
 
   void initDetailController() {
-    detailController.changeDateTime(DateTime.now());
+    detailController.changeDateTime(
+        DateTime.fromMillisecondsSinceEpoch(widget.transactions.dateTime));
     detailController.changeEditStatus(false);
     detailController.listUsers = widget.transactions.userSpecial;
     detailController.changeSwitchStatus(widget.transactions.special);
@@ -227,7 +229,11 @@ class _DetailViewState extends State<DetailView> {
                         RoundedButtonHalfSize(
                           title: _.isEditing ? 'Lưu' : 'Chỉnh sửa',
                           function: () async {
-                            _.changeEditStatus(true);
+                            if (_.isEditing) {
+                              await saveButtonFunction(_);
+                            } else {
+                              _.changeEditStatus(true);
+                            }
                           },
                           loading: _.loading,
                           screenSize: screenSize,
@@ -237,7 +243,18 @@ class _DetailViewState extends State<DetailView> {
                         if (!_.isEditing)
                           RoundedButtonHalfSize(
                             title: 'Xoá',
-                            function: () async {},
+                            function: () async {
+                              Transactions transaction = widget.transactions;
+                              var res =
+                                  await TransactionService.removeTransaction(
+                                      transaction);
+                              if (res['data']) {
+                                showToast('Xoá thành công!');
+                                Navigator.of(context).pop('Reload');
+                              } else {
+                                showToast('Xoá thất bại!');
+                              }
+                            },
                             loading: _.loading,
                             screenSize: screenSize,
                             backgroundColor: Colors.red,
@@ -252,6 +269,27 @@ class _DetailViewState extends State<DetailView> {
         ),
       ),
     );
+  }
+
+  Future saveButtonFunction(DetailController _) async {
+    Transactions transaction = widget.transactions;
+    transaction.title = titleController.text;
+    transaction.price = int.parse(priceController.text);
+    transaction.dateTime = _.dateTime.millisecondsSinceEpoch;
+    transaction.special = _.switchStatus;
+    transaction.uid = AuthService.uid;
+    if (transaction.special) {
+      transaction.userSpecial = _.listUsers;
+    } else {
+      transaction.userSpecial = [];
+    }
+    var res = await TransactionService.updateTransaction(transaction);
+    if (res['error'] == '') {
+      showToast('Update thành công!');
+      _.changeEditStatus(false);
+    } else {
+      showToast('Update thất bại!');
+    }
   }
 
   Widget buildSpecialUserItem(DetailController _, String uid) {
@@ -361,7 +399,7 @@ class _DetailViewState extends State<DetailView> {
   Widget buildPopButton() {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop('Reload');
       },
       child: Container(
         margin: EdgeInsets.only(left: 30.0),
