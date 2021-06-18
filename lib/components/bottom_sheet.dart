@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/models/user.dart';
-import 'package:money_statistic/service/authService.dart';
 import 'package:money_statistic/service/user_service.dart';
 
 class CustomBottomSheet extends StatefulWidget {

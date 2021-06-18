@@ -68,4 +68,12 @@ class UserService {
     }
     return res;
   }
+
+  static Future getListUserActive() async {
+    var listUser = await _fireStore
+        .collection(_collection)
+        .where('active', isEqualTo: true)
+        .getDocuments();
+    return listUser.documents;
+  }
 }

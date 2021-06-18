@@ -5,7 +5,7 @@ import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/views/history_view.dart';
 import 'package:money_statistic/views/home_view/home_view.dart';
 import 'package:money_statistic/views/profile_view/profile_view.dart';
-import 'package:money_statistic/views/summary_view.dart';
+import 'package:money_statistic/views/summary_view/summary_view.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class RootApp extends StatefulWidget {

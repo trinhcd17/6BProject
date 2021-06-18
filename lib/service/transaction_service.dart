@@ -81,7 +81,7 @@ class TransactionService {
     return result;
   }
 
-  static Stream<QuerySnapshot> getMonthPriceByUID() {
+  static Stream<QuerySnapshot> getMonthPriceCurrentUser() {
     DateTime currentTime = DateTime.now();
 
     String selectedMonth = currentTime.month < 10
@@ -95,7 +95,25 @@ class TransactionService {
     return res;
   }
 
-  static Future getTotalPriceByUID() async {
+  static Future getMonthPriceByUID(String uid) async {
+    DateTime currentTime = DateTime.now();
+
+    String selectedMonth = currentTime.month < 10
+        ? '0${currentTime.month}${currentTime.year}'
+        : '${currentTime.month}${currentTime.year}';
+    var total = 0;
+    var res = await _fireStore
+        .collection(_collection)
+        .document(selectedMonth)
+        .collection(uid)
+        .getDocuments();
+    for (var item in res.documents) {
+      total += item.data['price'];
+    }
+    return total;
+  }
+
+  static Future getTotalPriceCurrentUser() async {
     int result = 0;
     var listDocs = await _fireStore.collection(_collection).getDocuments();
     for (var item in listDocs.documents) {

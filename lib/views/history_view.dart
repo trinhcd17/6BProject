@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:money_statistic/components/app_bar.dart';
 import 'package:money_statistic/constants.dart';
 
 class HistoryView extends StatefulWidget {
@@ -10,15 +11,7 @@ class _HistoryViewState extends State<HistoryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: false,
-        title: Text(
-          'Lịch sử',
-          style: TextStyle(color: kPrimaryColor),
-        ),
-        elevation: 1,
-      ),
+      appBar: customAppBar(context, 'Lịch sử', null, null),
       body: Container(
         color: Colors.yellow,
       ),

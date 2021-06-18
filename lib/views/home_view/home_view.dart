@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:money_statistic/components/app_bar.dart';
 import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/models/transaction.dart';
 import 'package:money_statistic/service/authService.dart';
@@ -39,7 +40,9 @@ class _HomeViewState extends State<HomeView> {
           hoverColor: Colors.transparent),
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: buildAppBar(context),
+        appBar: customAppBar(context, 'Trang chủ', 'assets/icons/add.svg', () {
+          navigatorToAddScreen(context);
+        }),
         body: buildBody(),
       ),
     );
@@ -183,7 +186,7 @@ class _HomeViewState extends State<HomeView> {
       backgroundColor: Colors.white,
       centerTitle: false,
       title: Text(
-        'Thống kê',
+        'Thống kê'.toUpperCase(),
         style: TextStyle(color: kPrimaryColor),
       ),
       actions: [
@@ -191,10 +194,7 @@ class _HomeViewState extends State<HomeView> {
           padding: const EdgeInsets.only(right: 15.0),
           child: InkWell(
             onTap: () async {
-              pushNewScreen(context, screen: AddView(), withNavBar: false)
-                  .then((value) {
-                _homeController.reloadView();
-              });
+              navigatorToAddScreen(context);
             },
             child: SvgPicture.asset(
               'assets/icons/add.svg',
@@ -206,6 +206,12 @@ class _HomeViewState extends State<HomeView> {
       ],
       elevation: 1,
     );
+  }
+
+  void navigatorToAddScreen(BuildContext context) {
+    pushNewScreen(context, screen: AddView(), withNavBar: false).then((value) {
+      _homeController.reloadView();
+    });
   }
 
   Widget buildListItem(

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:money_statistic/components/app_bar.dart';
 import 'package:money_statistic/components/rounded_button.dart';
 import 'package:money_statistic/constants.dart';
 import 'package:money_statistic/models/user.dart';
@@ -33,7 +34,10 @@ class _ProfileViewState extends State<ProfileView> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(context),
+      appBar:
+          customAppBar(context, 'Tài khoản', 'assets/icons/exit_icon2.svg', () {
+        signOutFunction(context);
+      }),
       body: FutureBuilder(
           future: UserService.getUserInfo(),
           builder: (context, snapshot) {
@@ -68,7 +72,7 @@ class _ProfileViewState extends State<ProfileView> {
             buildItem('Tài khoản:',
                 snapshot.hasData ? currentU.username : 'username'),
             StreamBuilder(
-                stream: TransactionService.getMonthPriceByUID(),
+                stream: TransactionService.getMonthPriceCurrentUser(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var total = 0;
@@ -81,7 +85,7 @@ class _ProfileViewState extends State<ProfileView> {
                   }
                 }),
             FutureBuilder(
-                future: TransactionService.getTotalPriceByUID(),
+                future: TransactionService.getTotalPriceCurrentUser(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return buildItem(
@@ -94,7 +98,7 @@ class _ProfileViewState extends State<ProfileView> {
             RoundedButton(
               title: 'Đổi mật khẩu',
               function: () async {
-                await TransactionService.getTotalPriceByUID();
+                await TransactionService.getTotalPriceCurrentUser();
               },
               loading: false,
               screenSize: screenSize,
@@ -354,8 +358,7 @@ class _ProfileViewState extends State<ProfileView> {
           padding: const EdgeInsets.only(right: 15.0),
           child: InkWell(
             onTap: () {
-              AuthService.signOut();
-              pushNewScreen(context, screen: LoginView(), withNavBar: false);
+              signOutFunction(context);
             },
             child: Icon(
               Icons.exit_to_app_outlined,
@@ -367,6 +370,11 @@ class _ProfileViewState extends State<ProfileView> {
       ],
       elevation: 1,
     );
+  }
+
+  void signOutFunction(BuildContext context) {
+    AuthService.signOut();
+    pushNewScreen(context, screen: LoginView(), withNavBar: false);
   }
 
   getImageGallery() async {
